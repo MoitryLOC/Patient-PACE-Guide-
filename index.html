@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PACE User Guide</title>
   <style>
     html, body {
@@ -12,7 +12,7 @@
     }
     #pdf-render {
       width: 100%;
-      height: 100vh; /* full screen height */
+      height: 100vh;
       display: block;
     }
     #nav-controls {
@@ -21,10 +21,9 @@
       left: 50%;
       transform: translateX(-50%);
       z-index: 1000;
-      background: #ffffffcc; /* semi-transparent white, so visible */
+      background: #ffffffcc;
       padding: 5px 10px;
       border-radius: 5px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.3);
       font-family: Arial, sans-serif;
     }
     #nav-controls button {
@@ -43,17 +42,17 @@
 
 <canvas id="pdf-render"></canvas>
 
-<script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+<!-- Use working hosted pdf.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
-  // Use your direct link here
-  const url = 'https://drive.google.com/uc?export=download&id=1mt1rJYAd7bW7IIZe3kYmv3fQYG9efVbM';
+  const url = 'PACE-User-Guide.pdf'; // Must be local file
 
   let pdfDoc = null,
       pageNum = 1,
       pageIsRendering = false,
       pageNumIsPending = null;
 
-  const scale = 1.2;
+  const scale = 1.5;
   const canvas = document.getElementById('pdf-render');
   const ctx = canvas.getContext('2d');
 
@@ -61,16 +60,16 @@
     pageIsRendering = true;
 
     pdfDoc.getPage(num).then(page => {
-      const viewport = page.getViewport({ scale: scale });
+      const viewport = page.getViewport({ scale });
       canvas.height = viewport.height;
       canvas.width = viewport.width;
 
-      const renderContext = {
+      const renderCtx = {
         canvasContext: ctx,
-        viewport: viewport
+        viewport
       };
 
-      page.render(renderContext).promise.then(() => {
+      page.render(renderCtx).promise.then(() => {
         pageIsRendering = false;
         if (pageNumIsPending !== null) {
           renderPage(pageNumIsPending);
